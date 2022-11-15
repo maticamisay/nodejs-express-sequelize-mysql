@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const db = require("./models");
+const tutorialRouter = require("./routes/tutorial");
 
 const app = express();
 
@@ -16,10 +17,17 @@ app.use(express.json());
 // parse requests of content-type - application/x-www-form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 
-db.sequelize.sync({ force: true }).then(() => {
-  console.log("Drop and re-sync db.");
-});
+db.sequelize
+  .sync()
+  .then(() => {
+    console.log("Synced db.");
+  })
+  .catch((err) => {
+    console.log("Failed to sync db: " + err.message);
+  });
 // simple route
+
+app.use("/api/tutorials", tutorialRouter);
 app.get("/", (req, res) => {
   res.json({ message: "Bienvenido a mi app." });
 });
